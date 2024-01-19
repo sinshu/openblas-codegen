@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenBlasCodeGen", "OpenBlasCodeGen.csproj", "{30DE0B00-EB93-4F8A-93AA-383E87F57650}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30DE0B00-EB93-4F8A-93AA-383E87F57650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30DE0B00-EB93-4F8A-93AA-383E87F57650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30DE0B00-EB93-4F8A-93AA-383E87F57650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30DE0B00-EB93-4F8A-93AA-383E87F57650}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3242A938-FB94-42B0-9AF1-0E0395FECB7A}
+	EndGlobalSection
+EndGlobal
