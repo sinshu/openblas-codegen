@@ -10,4 +10,5 @@ public enum LineType
     VariableDeclaration,
     Extern,
     Comment,
+    Constant,
 }

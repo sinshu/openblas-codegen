@@ -16,6 +16,7 @@ public static class CodeProcessor
     public static IEnumerable<(string, LineType)> Process(string path)
     {
         var currentState = State.None;
+        var constantFound = false;
         var inFunctionDeclaration = false;
         var inExtern = false;
         var inVariableDeclaration = false;
@@ -36,8 +37,16 @@ public static class CodeProcessor
                         currentState = State.Function;
                         inFunctionDeclaration = true;
                     }
+                    else if (constantFound && IsConstant(line))
+                    {
+                        yield return (line, LineType.Constant);
+                    }
                     else
                     {
+                        if (line.Contains("/* Table of constant values */"))
+                        {
+                            constantFound = true;
+                        }
                         yield return (line, LineType.None);
                     }
                     break;
@@ -49,6 +58,10 @@ public static class CodeProcessor
                         {
                             yield return (line, LineType.FunctionDeclaration);
                             inFunctionDeclaration = false;
+                        }
+                        else
+                        {
+                            yield return (line, LineType.FunctionDeclaration);
                         }
                     }
                     else if (inExtern)
@@ -166,6 +179,11 @@ public static class CodeProcessor
     private static bool IsSingleLineComment(string line)
     {
         return line.Trim().StartsWith("/*") && line.Trim().EndsWith("*/");
+    }
+
+    private static bool IsConstant(string line)
+    {
+        return line.Trim().StartsWith("static ");
     }
 
 

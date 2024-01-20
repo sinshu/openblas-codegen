@@ -1,12 +1,17 @@
 ﻿using System;
+using System.IO;
 
 static class Program
 {
     static void Main(string[] args)
     {
-        foreach (var p in CodeProcessor.Process("dgesdd.c"))
+        Directory.CreateDirectory("cs");
+
+        foreach (var srcPath in Directory.EnumerateFiles("c"))
         {
-            Console.WriteLine(p.Item1 + " : " + p.Item2);
+            var dstPath = Path.Combine("cs", Path.GetFileNameWithoutExtension(srcPath) + ".cs");
+            Console.WriteLine(srcPath + " => " + dstPath);
+            CodeGenerator.Process(srcPath, dstPath);
         }
     }
 }
