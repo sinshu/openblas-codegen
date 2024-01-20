@@ -24,6 +24,7 @@ public static class CodeGenerator
             writer.WriteLine("using doublereal = double;");
             writer.WriteLine("using logical = bool;");
             writer.WriteLine("using ftnlen = int;");
+            writer.WriteLine("using address = System.ReadOnlySpan<byte>;");
             writer.WriteLine("#pragma warning restore CS8981");
             writer.WriteLine();
             writer.WriteLine("namespace MatFlat");

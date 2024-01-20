@@ -11,6 +11,8 @@ public static class CodeProcessor
         "integer",
         "doublereal",
         "logical",
+        "address",
+        "char",
     };
 
     public static IEnumerable<(string, LineType)> Process(string path)
