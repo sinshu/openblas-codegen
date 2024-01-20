@@ -22,9 +22,14 @@ namespace MatFlat
             return a.SequenceEqual(b);
         }
 
+        internal static unsafe void s_cat(byte* lpp, AddressArray2 rpp, int* rnp, int* np, int llp)
+        {
+            throw new NotImplementedException();
+        }
 
 
-        private ref struct AddressArray2
+
+        internal ref struct AddressArray2
         {
             private ReadOnlySpan<byte> item0;
             private ReadOnlySpan<byte> item1;
