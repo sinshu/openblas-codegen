@@ -10,6 +10,8 @@ public static class CodeGenerator
     private static readonly Regex regIsArray = new Regex(@"(.+)\[(\d+)\]");
     private static readonly Regex regRealNumber = new Regex(@"\d+\.\d*|\d*\.\d.");
     private static readonly Regex regCharPointer = new Regex(@"char\s*\*");
+    private static readonly Regex regIfComma = new Regex(@"if\s*\(.*(\(.+,.+\)).*\)");
+    private static readonly Regex regIs = new Regex(@"([^a-zA-Z0-9])is([^a-zA-Z0-9])");
 
     public static void Process(string srcPath, string dstPath)
     {
@@ -17,9 +19,12 @@ public static class CodeGenerator
         {
             writer.WriteLine("using System;");
             writer.WriteLine();
+            writer.WriteLine("#pragma warning disable CS8981");
             writer.WriteLine("using integer = int;");
             writer.WriteLine("using doublereal = double;");
             writer.WriteLine("using logical = bool;");
+            writer.WriteLine("using ftnlen = int;");
+            writer.WriteLine("#pragma warning restore CS8981");
             writer.WriteLine();
             writer.WriteLine("namespace MatFlat");
             writer.WriteLine("{");
@@ -47,7 +52,7 @@ public static class CodeGenerator
 
                 if (tpl.Item2 == LineType.VariableDeclaration)
                 {
-                    variableDeclaration.Append(tpl.Item1);
+                    variableDeclaration.Append(FixIs(tpl.Item1));
                     continue;
                 }
 
@@ -82,6 +87,7 @@ public static class CodeGenerator
 
                 var line = FixRealNumber(tpl.Item1);
                 line = FixComma(line);
+                line = FixIs(line);
                 writer.WriteLine(line);
             }
 
@@ -142,6 +148,62 @@ public static class CodeGenerator
 
     private static string FixComma(string line)
     {
+        for (var commaPos = 0; commaPos < line.Length; commaPos++)
+        {
+            if (line[commaPos] == ',')
+            {
+                var start = 0;
+                var k = 0;
+                for (var pos = commaPos - 1; pos >= 0; pos--)
+                {
+                    if (line[pos] == ')')
+                    {
+                        k++;
+                    }
+                    else if (line[pos] == '(')
+                    {
+                        if (k == 0)
+                        {
+                            start = pos;
+                            break;
+                        }
+                        k--;
+                    }
+                }
+                var end = line.Length;
+                k = 0;
+                for (var pos = commaPos + 1; pos < line.Length; pos++)
+                {
+                    if (line[pos] == '(')
+                    {
+                        k++;
+                    }
+                    else if (line[pos] == ')')
+                    {
+                        if (k == 0)
+                        {
+                            end = pos + 1;
+                            break;
+                        }
+                        k--;
+                    }
+                }
+
+                var target = line.Substring(start, end - start);
+                var lineLeft = line.Substring(0, start);
+                var lineRight = line.Substring(end, line.Length - end);
+                if (target.First() == '(')
+                {
+                    var left = line.Substring(start, commaPos - start);
+                    if (left.Contains('='))
+                    {
+                        return lineLeft + target + ".Item2" + lineRight;
+                    }
+                }
+            }
+
+        }
+
         var equalCount = line.Count(c => c == '=');
         if (equalCount >= 2)
         {
@@ -157,5 +219,13 @@ public static class CodeGenerator
     private static string CharPointerToString(string line)
     {
         return regCharPointer.Replace(line, "string ");
+    }
+
+    private static string FixIs(string line)
+    {
+        return regIs.Replace(line, match =>
+        {
+            return match.Groups[1].Value + "@is" + match.Groups[2].Value;
+        });
     }
 }

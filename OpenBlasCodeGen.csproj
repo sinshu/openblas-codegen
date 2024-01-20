@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="c\dbdsdc.c">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="c\dgesdd.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
