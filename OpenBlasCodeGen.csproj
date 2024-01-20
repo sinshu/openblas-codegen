@@ -12,6 +12,12 @@
     <None Update="c\dbdsdc.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="c\dgebrd.c">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="c\dgeqrf.c">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="c\dgesdd.c">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

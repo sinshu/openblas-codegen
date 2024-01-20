@@ -10,7 +10,6 @@ public static class CodeGenerator
     private static readonly Regex regIsArray = new Regex(@"(.+)\[(\d+)\]");
     private static readonly Regex regRealNumber = new Regex(@"\d+\.\d*|\d*\.\d.");
     private static readonly Regex regCharPointer = new Regex(@"char\s*\*");
-    private static readonly Regex regIfComma = new Regex(@"if\s*\(.*(\(.+,.+\)).*\)");
     private static readonly Regex regIs = new Regex(@"([^a-zA-Z0-9])is([^a-zA-Z0-9])");
 
     public static void Process(string srcPath, string dstPath)
@@ -71,6 +70,7 @@ public static class CodeGenerator
                 if (tpl.Item2 == LineType.FunctionBegin)
                 {
                     writer.WriteLine(tpl.Item1);
+                    writer.WriteLine("/* Table of constant values */");
                     foreach (var constant in constants)
                     {
                         writer.WriteLine(constant);
@@ -209,7 +209,15 @@ public static class CodeGenerator
         {
             if (line.Contains(','))
             {
-                return line.Replace(',', ';');
+                var sb = new StringBuilder(line);
+                for (var i = 0; i < sb.Length; i++)
+                {
+                    if (sb[i] == ',')
+                    {
+                        sb[i] = ';';
+                        return sb.ToString();
+                    }
+                }
             }
         }
 
