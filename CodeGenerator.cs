@@ -11,6 +11,7 @@ public static class CodeGenerator
     private static readonly Regex regRealNumber = new Regex(@"\d+\.\d*|\d*\.\d.");
     private static readonly Regex regCharPointer = new Regex(@"char\s*\*");
     private static readonly Regex regIs = new Regex(@"([^a-zA-Z0-9])is([^a-zA-Z0-9])");
+    private static readonly Regex regString = new Regex("\"([^\"]*)\"");
 
     public static void Process(string srcPath, string dstPath)
     {
@@ -88,6 +89,7 @@ public static class CodeGenerator
                 var line = FixRealNumber(tpl.Item1);
                 line = FixComma(line);
                 line = FixIs(line);
+                line = FixString(line);
                 writer.WriteLine(line);
             }
 
@@ -226,7 +228,7 @@ public static class CodeGenerator
 
     private static string CharPointerToString(string line)
     {
-        return regCharPointer.Replace(line, "string ");
+        return regCharPointer.Replace(line, "ReadOnlySpan<byte>");
     }
 
     private static string FixIs(string line)
@@ -234,6 +236,14 @@ public static class CodeGenerator
         return regIs.Replace(line, match =>
         {
             return match.Groups[1].Value + "@is" + match.Groups[2].Value;
+        });
+    }
+
+    private static string FixString(string line)
+    {
+        return regString.Replace(line, match =>
+        {
+            return match.Value + "u8";
         });
     }
 }
