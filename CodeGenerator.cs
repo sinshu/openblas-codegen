@@ -12,6 +12,7 @@ public static class CodeGenerator
     private static readonly Regex regCharPointer = new Regex(@"char\s*\*");
     private static readonly Regex regIs = new Regex(@"([^a-zA-Z0-9])is([^a-zA-Z0-9])");
     private static readonly Regex regString = new Regex("\"([^\"]*)\"");
+    private static readonly Regex regCharLiteral = new Regex(@"'.'");
 
     public static void Process(string srcPath, string dstPath)
     {
@@ -53,7 +54,9 @@ public static class CodeGenerator
 
                 if (tpl.Item2 == LineType.VariableDeclaration)
                 {
-                    variableDeclaration.Append(FixIs(tpl.Item1));
+                    var result = FixIs(tpl.Item1);
+                    result = FixChar(result);
+                    variableDeclaration.Append(result);
                     continue;
                 }
 
@@ -91,6 +94,7 @@ public static class CodeGenerator
                 line = FixComma(line);
                 line = FixIs(line);
                 line = FixString(line);
+                line = FixCharCast(line);
                 writer.WriteLine(line);
             }
 
@@ -113,7 +117,14 @@ public static class CodeGenerator
                 {
                     var name = isArray.Groups[1].Value;
                     var count = isArray.Groups[2].Value;
-                    writer.WriteLine(currentType + "* " + name + " = stackalloc " + currentType + "[" + count + "];");
+                    if (currentType == "address")
+                    {
+                        writer.WriteLine("AddressArray" + count + " " + name + " = new AddressArray" + count + "();");
+                    }
+                    else
+                    {
+                        writer.WriteLine(currentType + "* " + name + " = stackalloc " + currentType + "[" + count + "];");
+                    }
                 }
                 else
                 {
@@ -246,5 +257,22 @@ public static class CodeGenerator
         {
             return match.Value + "u8";
         });
+    }
+
+    private static string FixChar(string line)
+    {
+        return line.Replace("char", "byte");
+    }
+
+    private static string FixCharCast(string line)
+    {
+        var match = regCharLiteral.Match(line);
+        if (match.Success)
+        {
+            var result = line.Replace("(unsigned char *)", "");
+            return regCharLiteral.Replace(result, match => "(byte)" + match.Value);
+        }
+
+        return line;
     }
 }

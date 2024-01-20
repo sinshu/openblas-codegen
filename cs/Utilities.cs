@@ -21,5 +21,36 @@ namespace MatFlat
         {
             return a.SequenceEqual(b);
         }
+
+
+
+        private ref struct AddressArray2
+        {
+            private ReadOnlySpan<byte> item0;
+            private ReadOnlySpan<byte> item1;
+
+            public ReadOnlySpan<byte> this[int index]
+            {
+                get
+                {
+                    switch (index)
+                    {
+                        case 0: return item0;
+                        case 1: return item1;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+
+                set
+                {
+                    switch (index)
+                    {
+                        case 0: item0 = value; break;
+                        case 1: item1 = value; break;
+                        default: throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+        }
     }
 }
